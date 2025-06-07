@@ -1,6 +1,7 @@
 package cl.duoc.sistema_aduanero.javafx;
 
-import cl.duoc.sistema_aduanero.model.SolicitudAduana;
+import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,14 +41,22 @@ public class MainController {
     // ======================
     // Campos de FXML (Revisar Solicitudes)
     // ======================
-    @FXML private TableView<SolicitudAduana> tableSolicitudes;
-    @FXML private TableColumn<SolicitudAduana, Long> colId;
-    @FXML private TableColumn<SolicitudAduana, String> colNombre;
-    @FXML private TableColumn<SolicitudAduana, String> colEstado;
-    @FXML private TableColumn<SolicitudAduana, String> colFecha;
+    @FXML private TableView<SolicitudViajeMenores> tableSolicitudes;
+    @FXML private TableColumn<SolicitudViajeMenores, Long> colId;
+    @FXML private TableColumn<SolicitudViajeMenores, String> colNombre;
+    @FXML private TableColumn<SolicitudViajeMenores, String> colEstado;
+    @FXML private TableColumn<SolicitudViajeMenores, String> colFecha;
 
     // Cliente HTTP reutilizable
     private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    @FXML
+    private void initialize() {
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombrePadreMadre"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaCreacion"));
+    }
 
     // ======================
     // Handler: Salir de la aplicación
@@ -146,9 +155,9 @@ public class MainController {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                // Convertir JSON a List<SolicitudAduana>
-                List<SolicitudAduana> lista = JsonUtils.fromJsonList(response.body(), SolicitudAduana.class);
-                ObservableList<SolicitudAduana> obsList = FXCollections.observableArrayList(lista);
+                // Convertir JSON a List<SolicitudViajeMenores>
+                List<SolicitudViajeMenores> lista = JsonUtils.fromJsonList(response.body(), SolicitudViajeMenores.class);
+                ObservableList<SolicitudViajeMenores> obsList = FXCollections.observableArrayList(lista);
                 tableSolicitudes.setItems(obsList);
             } else {
                 showAlert(Alert.AlertType.ERROR, "Error al cargar solicitudes: HTTP " + response.statusCode());
@@ -164,7 +173,7 @@ public class MainController {
     // ======================
     @FXML
     private void handleVerDetalle() {
-        SolicitudAduana sel = tableSolicitudes.getSelectionModel().getSelectedItem();
+        SolicitudViajeMenores sel = tableSolicitudes.getSelectionModel().getSelectedItem();
         if (sel == null) {
             showAlert(Alert.AlertType.WARNING, "Selecciona una solicitud primero.");
             return;
@@ -184,7 +193,7 @@ public class MainController {
     // ======================
     @FXML
     private void handleAprobar() {
-        SolicitudAduana sel = tableSolicitudes.getSelectionModel().getSelectedItem();
+        SolicitudViajeMenores sel = tableSolicitudes.getSelectionModel().getSelectedItem();
         if (sel == null) {
             showAlert(Alert.AlertType.WARNING, "Selecciona una solicitud primero.");
             return;
@@ -197,7 +206,7 @@ public class MainController {
     // ======================
     @FXML
     private void handleRechazar() {
-        SolicitudAduana sel = tableSolicitudes.getSelectionModel().getSelectedItem();
+        SolicitudViajeMenores sel = tableSolicitudes.getSelectionModel().getSelectedItem();
         if (sel == null) {
             showAlert(Alert.AlertType.WARNING, "Selecciona una solicitud primero.");
             return;
