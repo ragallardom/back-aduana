@@ -1,6 +1,6 @@
 package cl.duoc.sistema_aduanero.service;
 
-import cl.duoc.sistema_aduanero.model.SolicitudAduana;
+import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.repository.SolicitudAduanaRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,22 +14,22 @@ public class SolicitudAduanaService {
         this.repository = repository;
     }
 
-    public SolicitudAduana crearSolicitud(SolicitudAduana solicitud) {
+    public SolicitudViajeMenores crearSolicitud(SolicitudViajeMenores solicitud) {
         return repository.save(solicitud);
     }
 
-    public List<SolicitudAduana> obtenerTodas() {
+    public List<SolicitudViajeMenores> obtenerTodas() {
         return repository.findAll();
     }
 
-    public SolicitudAduana actualizarEstado(Long id, String nuevoEstado) {
-        SolicitudAduana solicitud = repository.findById(id)
+    public SolicitudViajeMenores actualizarEstado(Long id, String nuevoEstado) {
+        SolicitudViajeMenores solicitud = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         solicitud.setEstado(nuevoEstado);
         return repository.save(solicitud);
     }
 
-    public SolicitudAduana obtenerPorId(Long id) {
+    public SolicitudViajeMenores obtenerPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 

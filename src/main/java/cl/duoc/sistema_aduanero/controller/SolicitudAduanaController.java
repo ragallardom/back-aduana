@@ -1,7 +1,7 @@
 package cl.duoc.sistema_aduanero.controller;
 
-import cl.duoc.sistema_aduanero.model.DocumentoAdjunto;
-import cl.duoc.sistema_aduanero.model.SolicitudAduana;
+import cl.duoc.sistema_aduanero.model.AdjuntoViajeMenores;
+import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
 import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +39,17 @@ public class SolicitudAduanaController {
     }
 
     @PostMapping
-    public ResponseEntity<SolicitudAduana> crear(@RequestBody SolicitudAduana solicitud) {
+    public ResponseEntity<SolicitudViajeMenores> crear(@RequestBody SolicitudViajeMenores solicitud) {
         return new ResponseEntity<>(service.crearSolicitud(solicitud), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<SolicitudAduana> listar() {
+    public List<SolicitudViajeMenores> listar() {
         return service.obtenerTodas();
     }
 
     @PutMapping("/{id}/estado")
-    public ResponseEntity<SolicitudAduana> actualizarEstado(
+    public ResponseEntity<SolicitudViajeMenores> actualizarEstado(
             @PathVariable Long id,
             @RequestParam String estado
     ) {
@@ -57,8 +57,8 @@ public class SolicitudAduanaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SolicitudAduana> obtenerPorId(@PathVariable Long id) {
-        SolicitudAduana s = service.obtenerPorId(id);
+    public ResponseEntity<SolicitudViajeMenores> obtenerPorId(@PathVariable Long id) {
+        SolicitudViajeMenores s = service.obtenerPorId(id);
         if (s == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(s);
     }
@@ -66,7 +66,7 @@ public class SolicitudAduanaController {
     @GetMapping("/descargar/{id}")
     public ResponseEntity<InputStreamResource> descargarTodosLosDocumentos(@PathVariable Long id) {
         try {
-            SolicitudAduana solicitud = solicitudService.obtenerPorId(id);
+            SolicitudViajeMenores solicitud = solicitudService.obtenerPorId(id);
             if (solicitud == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -76,8 +76,8 @@ public class SolicitudAduanaController {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zos = new ZipOutputStream(baos);
 
-            for (DocumentoAdjunto doc : solicitud.getDocumentos()) {
-                String rutaArchivo = doc.getRutaArchivo();
+            for (AdjuntoViajeMenores doc : solicitud.getDocumentos()) {
+                String rutaArchivo = doc.getRuta();
                 Path pathDoc = Paths.get(rutaArchivo);
 
                 if (!Files.exists(pathDoc) || Files.isDirectory(pathDoc)) {
@@ -134,14 +134,14 @@ public class SolicitudAduanaController {
             @RequestParam("archivo") MultipartFile archivo
     ) {
         try {
-            SolicitudAduana solicitud = new SolicitudAduana();
+            SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
             solicitud.setNombreSolicitante(nombreSolicitante);
             solicitud.setTipoDocumento(tipoDocumento);
             solicitud.setNumeroDocumento(numeroDocumento);
             solicitud.setMotivo(motivo);
             solicitud.setPaisOrigen(paisOrigen);
 
-            SolicitudAduana guardada = service.crearSolicitud(solicitud);
+            SolicitudViajeMenores guardada = service.crearSolicitud(solicitud);
 
 
 

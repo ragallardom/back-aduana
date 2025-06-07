@@ -1,7 +1,7 @@
 package cl.duoc.sistema_aduanero.service;
 
-import cl.duoc.sistema_aduanero.model.DocumentoAdjunto;
-import cl.duoc.sistema_aduanero.model.SolicitudAduana;
+import cl.duoc.sistema_aduanero.model.AdjuntoViajeMenores;
+import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.repository.DocumentoAdjuntoRepository;
 import cl.duoc.sistema_aduanero.repository.SolicitudAduanaRepository;
 import org.apache.commons.io.FilenameUtils;
@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -23,7 +22,7 @@ public class DocumentoAdjuntoService {
 
     private final String BASE_PATH = "C:/Users/ragal/IdeaProjects/sistema_aduanero/uploads";
 
-    public DocumentoAdjunto guardarArchivo(SolicitudAduana solicitud, String tipoDocumento, MultipartFile archivo) throws IOException {
+    public AdjuntoViajeMenores guardarArchivo(SolicitudViajeMenores solicitud, String tipoDocumento, MultipartFile archivo) throws IOException {
         if (archivo == null || archivo.isEmpty()) {
             throw new IllegalArgumentException("El archivo está vacío");
         }
@@ -45,11 +44,10 @@ public class DocumentoAdjuntoService {
         Path rutaFinal = Paths.get(carpetaSolicitud, nombreFormateado);
         archivo.transferTo(rutaFinal.toFile());
 
-        DocumentoAdjunto doc = new DocumentoAdjunto();
+        AdjuntoViajeMenores doc = new AdjuntoViajeMenores();
         doc.setSolicitud(solicitud);
         doc.setNombreArchivo(nombreFormateado);
-        doc.setTipoDocumento(tipoDocumento);
-        doc.setRutaArchivo(rutaFinal.toString());
+        doc.setRuta(rutaFinal.toString());
 
         return documentoAdjuntoRepository.save(doc);
     }
@@ -57,12 +55,12 @@ public class DocumentoAdjuntoService {
     @Autowired
     private SolicitudAduanaRepository solicitudRepository;
 
-    public SolicitudAduana crearSolicitud(SolicitudAduana solicitud) {
+    public SolicitudViajeMenores crearSolicitud(SolicitudViajeMenores solicitud) {
         return solicitudRepository.save(solicitud);
     }
 
-    public SolicitudAduana obtenerPorId(Long id) {
-        Optional<SolicitudAduana> opt = solicitudRepository.findById(id);
+    public SolicitudViajeMenores obtenerPorId(Long id) {
+        Optional<SolicitudViajeMenores> opt = solicitudRepository.findById(id);
         return opt.orElse(null);
     }
 }
