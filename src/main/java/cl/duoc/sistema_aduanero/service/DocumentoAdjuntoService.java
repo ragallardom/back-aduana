@@ -50,7 +50,6 @@ public class DocumentoAdjuntoService {
         doc.setNombreArchivo(nombreFormateado);
         doc.setTipoDocumento(tipoDocumento);
         doc.setRutaArchivo(rutaFinal.toString());
-        doc.setFechaSubida(LocalDateTime.now());
 
         return documentoAdjuntoRepository.save(doc);
     }
