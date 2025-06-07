@@ -124,7 +124,7 @@ public class SolicitudAduanaController {
     }
 
     @PostMapping("/adjuntar")
-    public ResponseEntity<SolicitudAduana> crearConAdjunto(
+    public ResponseEntity<SolicitudViajeMenores> crearConAdjunto(
             @RequestParam String nombreSolicitante,
             @RequestParam String tipoDocumento,
             @RequestParam String numeroDocumento,
