@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -26,22 +25,27 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/api/solicitudes")
 public class SolicitudAduanaController {
 
-    private final SolicitudAduanaService solicitudService;
+    @Autowired
+    private SolicitudAduanaService solicitudService;
+
+    private static final String RUTA_UPLOADS = "uploads/";
+
+    private final SolicitudAduanaService service;
     private final DocumentoAdjuntoService adjuntoService;
 
-    public SolicitudAduanaController(SolicitudAduanaService solicitudService, DocumentoAdjuntoService adjuntoService) {
-        this.solicitudService = solicitudService;
+    public SolicitudAduanaController(SolicitudAduanaService service, DocumentoAdjuntoService adjuntoService) {
+        this.service = service;
         this.adjuntoService = adjuntoService;
     }
 
     @PostMapping
     public ResponseEntity<SolicitudViajeMenores> crear(@RequestBody SolicitudViajeMenores solicitud) {
-        return new ResponseEntity<>(solicitudService.crearSolicitud(solicitud), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.crearSolicitud(solicitud), HttpStatus.CREATED);
     }
 
     @GetMapping
     public List<SolicitudViajeMenores> listar() {
-        return solicitudService.obtenerTodas();
+        return service.obtenerTodas();
     }
 
     @PutMapping("/{id}/estado")
@@ -49,26 +53,23 @@ public class SolicitudAduanaController {
             @PathVariable Long id,
             @RequestParam String estado
     ) {
-        return ResponseEntity.ok(solicitudService.actualizarEstado(id, estado));
+        return ResponseEntity.ok(service.actualizarEstado(id, estado));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudViajeMenores> obtenerPorId(@PathVariable Long id) {
-
-        SolicitudViajeMenores s = solicitudService.obtenerPorId(id);
+        SolicitudViajeMenores s = service.obtenerPorId(id);
         if (s == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(s);
-
     }
 
     @GetMapping("/descargar/{id}")
     public ResponseEntity<InputStreamResource> descargarTodosLosDocumentos(@PathVariable Long id) {
         try {
-            Optional<SolicitudViajeMenores> solicitudOpt = solicitudService.obtenerPorId(id);
-            if (solicitudOpt.isEmpty()) {
+            SolicitudViajeMenores solicitud = solicitudService.obtenerPorId(id);
+            if (solicitud == null) {
                 return ResponseEntity.notFound().build();
             }
-            SolicitudViajeMenores solicitud = solicitudOpt.get();
 
             String nombreZip = "solicitud_" + id + "_documentos.zip";
 
@@ -134,8 +135,13 @@ public class SolicitudAduanaController {
     ) {
         try {
             SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
+            solicitud.setNombreSolicitante(nombreSolicitante);
+            solicitud.setTipoDocumento(tipoDocumento);
+            solicitud.setNumeroDocumento(numeroDocumento);
+            solicitud.setMotivo(motivo);
+            solicitud.setPaisOrigen(paisOrigen);
 
-            SolicitudViajeMenores guardada = solicitudService.crearSolicitud(solicitud);
+            SolicitudViajeMenores guardada = service.crearSolicitud(solicitud);
 
 
 
