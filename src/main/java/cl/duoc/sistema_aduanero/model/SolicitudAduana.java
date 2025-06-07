@@ -1,6 +1,5 @@
 package cl.duoc.sistema_aduanero.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
