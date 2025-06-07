@@ -4,6 +4,7 @@ import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.repository.SolicitudAduanaRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SolicitudAduanaService {
@@ -29,9 +30,8 @@ public class SolicitudAduanaService {
         return repository.save(solicitud);
     }
 
-    public SolicitudViajeMenores obtenerPorId(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+    public Optional<SolicitudViajeMenores> obtenerPorId(Long id) {
+        return repository.findById(id);
 
     }
 }

@@ -6,6 +6,7 @@ import cl.duoc.sistema_aduanero.repository.DocumentoAdjuntoRepository;
 import cl.duoc.sistema_aduanero.repository.SolicitudAduanaRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -20,14 +21,15 @@ public class DocumentoAdjuntoService {
     @Autowired
     private DocumentoAdjuntoRepository documentoAdjuntoRepository;
 
-    private final String BASE_PATH = "C:/Users/ragal/IdeaProjects/sistema_aduanero/uploads";
+    @Value("${app.upload.base-dir}")
+    private String basePath;
 
     public AdjuntoViajeMenores guardarArchivo(SolicitudViajeMenores solicitud, String tipoDocumento, MultipartFile archivo) throws IOException {
         if (archivo == null || archivo.isEmpty()) {
             throw new IllegalArgumentException("El archivo está vacío");
         }
 
-        String carpetaSolicitud = BASE_PATH + "/solicitud_" + solicitud.getId();
+        String carpetaSolicitud = Paths.get(basePath, "solicitud_" + solicitud.getId()).toString();
         File dir = new File(carpetaSolicitud);
         if (!dir.exists()) {
             dir.mkdirs();

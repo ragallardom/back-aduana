@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-
 import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,6 +47,14 @@ public class MainController {
 
     // Cliente HTTP reutilizable
     private final HttpClient httpClient = HttpClient.newHttpClient();
+
+    @FXML
+    private void initialize() {
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombrePadreMadre"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaCreacion"));
+    }
 
     // ======================
     // Handler: Salir de la aplicación
@@ -113,7 +120,7 @@ public class MainController {
 
             // 4) Crear la petición HTTP POST
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/solicitudes/adjuntar"))
+                    .uri(URI.create("http://localhost:8080/api/solicitudes/adjuntar"))
                     .header("Content-Type", "multipart/form-data; boundary=" + boundary)
                     .POST(bodyPublisher)
                     .build();
@@ -140,7 +147,7 @@ public class MainController {
     private void handleRefrescar() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/solicitudes"))
+                    .uri(URI.create("http://localhost:8080/api/solicitudes"))
                     .GET()
                     .build();
 
@@ -211,7 +218,7 @@ public class MainController {
     private void cambiarEstado(Long id, String nuevoEstado) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/solicitudes/" + id + "/estado?estado=" + nuevoEstado))
+                    .uri(URI.create("http://localhost:8080/api/solicitudes/" + id + "/estado?estado=" + nuevoEstado))
                     .PUT(HttpRequest.BodyPublishers.noBody())
                     .build();
 
