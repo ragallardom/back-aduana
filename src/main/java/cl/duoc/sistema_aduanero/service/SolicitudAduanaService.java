@@ -33,5 +33,6 @@ public class SolicitudAduanaService {
     public SolicitudAduana obtenerPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
     }
 }
