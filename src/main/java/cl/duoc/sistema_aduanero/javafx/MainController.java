@@ -1,13 +1,11 @@
 package cl.duoc.sistema_aduanero.javafx;
 
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-
 import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;

@@ -134,11 +134,6 @@ public class SolicitudAduanaController {
     ) {
         try {
             SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
-            solicitud.setNombreSolicitante(nombreSolicitante);
-            solicitud.setTipoDocumento(tipoDocumento);
-            solicitud.setNumeroDocumento(numeroDocumento);
-            solicitud.setMotivo(motivo);
-            solicitud.setPaisOrigen(paisOrigen);
 
             SolicitudViajeMenores guardada = solicitudService.crearSolicitud(solicitud);
 

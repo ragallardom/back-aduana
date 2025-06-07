@@ -15,7 +15,7 @@ public class JsonUtils {
      * Convierte un JSON que representa una lista de elementos T a List<T>.
      * Ejemplo:
      *   String json = "[{...},{...}]";
-     *   List<SolicitudAduana> lista = JsonUtils.fromJsonList(json, SolicitudAduana.class);
+     *   List<SolicitudViajeMenores> lista = JsonUtils.fromJsonList(json, SolicitudViajeMenores.class);
      */
     public static <T> List<T> fromJsonList(String json, Class<T> clazz) throws JsonProcessingException {
         return mapper.readValue(json, new TypeReference<List<T>>() {});
@@ -24,8 +24,8 @@ public class JsonUtils {
     /**
      * Convierte un JSON a un solo objeto de tipo T.
      * Ejemplo:
-     *   String json = "{\"id\":1,\"nombreSolicitante\":\"Juan\"}";
-     *   SolicitudAduana s = JsonUtils.fromJson(json, SolicitudAduana.class);
+     *   String json = "{\"id\":1,\"nombreMenor\":\"Juan\"}";
+     *   SolicitudViajeMenores s = JsonUtils.fromJson(json, SolicitudViajeMenores.class);
      */
     public static <T> T fromJson(String json, Class<T> clazz) throws JsonProcessingException {
         return mapper.readValue(json, clazz);
