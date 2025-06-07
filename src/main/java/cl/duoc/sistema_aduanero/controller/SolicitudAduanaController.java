@@ -5,16 +5,13 @@ import cl.duoc.sistema_aduanero.model.SolicitudAduana;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
 import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,36 +66,28 @@ public class SolicitudAduanaController {
     @GetMapping("/descargar/{id}")
     public ResponseEntity<InputStreamResource> descargarTodosLosDocumentos(@PathVariable Long id) {
         try {
-            // 1) Obtener la solicitud con sus documentos
             SolicitudAduana solicitud = solicitudService.obtenerPorId(id);
             if (solicitud == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            // 2) Nombre del ZIP resultante (puedes ajustar el nombre)
             String nombreZip = "solicitud_" + id + "_documentos.zip";
 
-            // 3) Crear un OutputStream en memoria para el ZIP
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zos = new ZipOutputStream(baos);
 
-            // 4) Iterar sobre cada DocumentoAdjunto y agregarlo al ZIP
             for (DocumentoAdjunto doc : solicitud.getDocumentos()) {
                 String rutaArchivo = doc.getRutaArchivo();
                 Path pathDoc = Paths.get(rutaArchivo);
 
                 if (!Files.exists(pathDoc) || Files.isDirectory(pathDoc)) {
-                    // Si el archivo no existe o es un directorio, lo ignoramos.
                     continue;
                 }
 
-                // Nombre que tendrá dentro del ZIP (ejemplo: "documento_nacional.pdf")
                 String nombreDentroZip = doc.getNombreArchivo();
 
-                // Crear nueva entrada en el ZIP
                 zos.putNextEntry(new ZipEntry(nombreDentroZip));
 
-                // Leer bytes del archivo y escribirlos en el ZipOutputStream
                 try (InputStream is = Files.newInputStream(pathDoc)) {
                     byte[] buffer = new byte[4096];
                     int len;
@@ -110,16 +99,13 @@ public class SolicitudAduanaController {
                 zos.closeEntry();
             }
 
-            // 5) Finalizar el ZIP
             zos.finish();
             zos.close();
 
-            // 6) Preparar InputStreamResource a partir del byte array
             byte[] zipBytes = baos.toByteArray();
             ByteArrayInputStream bis = new ByteArrayInputStream(zipBytes);
             InputStreamResource resource = new InputStreamResource(bis);
 
-            // 7) Devolver ResponseEntity con encabezados para descarga
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombreZip + "\"")
                     .contentLength(zipBytes.length)

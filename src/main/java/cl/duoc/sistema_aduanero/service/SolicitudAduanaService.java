@@ -3,7 +3,6 @@ package cl.duoc.sistema_aduanero.service;
 import cl.duoc.sistema_aduanero.model.SolicitudAduana;
 import cl.duoc.sistema_aduanero.repository.SolicitudAduanaRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -33,5 +32,6 @@ public class SolicitudAduanaService {
     public SolicitudAduana obtenerPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
     }
 }
