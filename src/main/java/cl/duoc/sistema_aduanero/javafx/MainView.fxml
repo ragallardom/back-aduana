@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="cl.duoc.sistema_aduanero.javafx.MainController">
+    <top>
+        <MenuBar>
+            <Menu text="Archivo">
+                <MenuItem text="Salir" onAction="#handleSalir"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane>
+            <!-- Pestaña para Registrar Solicitud -->
+            <Tab text="Registrar Solicitud">
+                <VBox spacing="8" padding="10">
+                    <Label text="Nombre Solicitante:"/>
+                    <TextField fx:id="tfNombre"/>
+
+                    <Label text="Número Documento:"/>
+                    <TextField fx:id="tfNumero"/>
+
+                    <Label text="Tipo Documento:"/>
+                    <TextField fx:id="tfTipoDocEnt"/>
+
+                    <Label text="País Origen:"/>
+                    <TextField fx:id="tfPais"/>
+
+                    <Label text="Motivo:"/>
+                    <TextArea fx:id="taMotivo" prefRowCount="3"/>
+
+                    <Label text="Tipo Adjuntar (p. ej. factura_importacion):"/>
+                    <TextField fx:id="tfTipoAdj"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Seleccionar Archivo" onAction="#handleSeleccionarArchivo"/>
+                        <Label fx:id="lblArchivoSeleccionado" text="(ninguno)"/>
+                    </HBox>
+
+                    <Button text="Enviar Solicitud" onAction="#handleEnviarSolicitud"/>
+                </VBox>
+            </Tab>
+
+            <!-- Pestaña para Revisar Solicitudes -->
+            <Tab text="Revisar Solicitudes">
+                <VBox spacing="8" padding="10">
+                    <Button text="Refrescar Lista" onAction="#handleRefrescar"/>
+
+                    <TableView fx:id="tableSolicitudes" prefHeight="300">
+                        <columns>
+                            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                            <TableColumn fx:id="colNombre" text="Solicitante" prefWidth="150"/>
+                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="10">
+                        <Button text="Ver Detalle" onAction="#handleVerDetalle"/>
+                        <Button text="Aprobar" onAction="#handleAprobar"/>
+                        <Button text="Rechazar" onAction="#handleRechazar"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>
