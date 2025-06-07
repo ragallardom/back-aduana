@@ -124,7 +124,7 @@ public class SolicitudAduanaController {
     }
 
     @PostMapping("/adjuntar")
-    public ResponseEntity<SolicitudAduana> crearConAdjunto(
+    public ResponseEntity<SolicitudViajeMenores> crearConAdjunto(
             @RequestParam String nombreSolicitante,
             @RequestParam String tipoDocumento,
             @RequestParam String numeroDocumento,
@@ -135,11 +135,6 @@ public class SolicitudAduanaController {
     ) {
         try {
             SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
-            solicitud.setNombreSolicitante(nombreSolicitante);
-            solicitud.setTipoDocumento(tipoDocumento);
-            solicitud.setNumeroDocumento(numeroDocumento);
-            solicitud.setMotivo(motivo);
-            solicitud.setPaisOrigen(paisOrigen);
 
             SolicitudViajeMenores guardada = service.crearSolicitud(solicitud);
 
