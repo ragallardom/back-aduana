@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -53,18 +54,21 @@ public class SolicitudAduanaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudViajeMenores> obtenerPorId(@PathVariable Long id) {
+
         SolicitudViajeMenores s = solicitudService.obtenerPorId(id);
         if (s == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(s);
+
     }
 
     @GetMapping("/descargar/{id}")
     public ResponseEntity<InputStreamResource> descargarTodosLosDocumentos(@PathVariable Long id) {
         try {
-            SolicitudViajeMenores solicitud = solicitudService.obtenerPorId(id);
-            if (solicitud == null) {
+            Optional<SolicitudViajeMenores> solicitudOpt = solicitudService.obtenerPorId(id);
+            if (solicitudOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
+            SolicitudViajeMenores solicitud = solicitudOpt.get();
 
             String nombreZip = "solicitud_" + id + "_documentos.zip";
 
@@ -119,7 +123,7 @@ public class SolicitudAduanaController {
     }
 
     @PostMapping("/adjuntar")
-    public ResponseEntity<SolicitudAduana> crearConAdjunto(
+    public ResponseEntity<SolicitudViajeMenores> crearConAdjunto(
             @RequestParam String nombreSolicitante,
             @RequestParam String tipoDocumento,
             @RequestParam String numeroDocumento,

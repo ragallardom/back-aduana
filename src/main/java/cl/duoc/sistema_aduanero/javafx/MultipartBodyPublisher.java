@@ -165,7 +165,6 @@ public class MultipartBodyPublisher implements HttpRequest.BodyPublisher {
         BodySubscription(Flow.Subscriber<? super ByteBuffer> subscriber, List<ByteBuffer> bufs) {
             this.subscriber = subscriber;
             this.iterator = bufs.iterator();
-            subscriber.onSubscribe(this);
         }
 
         @Override
