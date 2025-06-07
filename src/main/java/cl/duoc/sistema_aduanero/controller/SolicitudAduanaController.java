@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -23,8 +24,6 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/api/solicitudes")
 public class SolicitudAduanaController {
-
-    private static final String RUTA_UPLOADS = "uploads/";
 
     private final SolicitudAduanaService solicitudService;
     private final DocumentoAdjuntoService adjuntoService;
@@ -54,18 +53,21 @@ public class SolicitudAduanaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudViajeMenores> obtenerPorId(@PathVariable Long id) {
-        SolicitudViajeMenores s = solicitudService.obtenerPorId(id);
+
+        Optional<SolicitudViajeMenores> s = solicitudService.obtenerPorId(id);
         if (s == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(s);
+        return ResponseEntity.ok(s.get());
+
     }
 
     @GetMapping("/descargar/{id}")
     public ResponseEntity<InputStreamResource> descargarTodosLosDocumentos(@PathVariable Long id) {
         try {
-            SolicitudViajeMenores solicitud = solicitudService.obtenerPorId(id);
-            if (solicitud == null) {
+            Optional<SolicitudViajeMenores> solicitudOpt = solicitudService.obtenerPorId(id);
+            if (solicitudOpt.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
+            SolicitudViajeMenores solicitud = solicitudOpt.get();
 
             String nombreZip = "solicitud_" + id + "_documentos.zip";
 
@@ -131,11 +133,6 @@ public class SolicitudAduanaController {
     ) {
         try {
             SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
-            solicitud.setNombreSolicitante(nombreSolicitante);
-            solicitud.setTipoDocumento(tipoDocumento);
-            solicitud.setNumeroDocumento(numeroDocumento);
-            solicitud.setMotivo(motivo);
-            solicitud.setPaisOrigen(paisOrigen);
 
             SolicitudViajeMenores guardada = solicitudService.crearSolicitud(solicitud);
 
