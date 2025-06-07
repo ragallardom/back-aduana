@@ -26,27 +26,22 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/api/solicitudes")
 public class SolicitudAduanaController {
 
-    @Autowired
-    private SolicitudAduanaService solicitudService;
-
-    private static final String RUTA_UPLOADS = "uploads/";
-
-    private final SolicitudAduanaService service;
+    private final SolicitudAduanaService solicitudService;
     private final DocumentoAdjuntoService adjuntoService;
 
-    public SolicitudAduanaController(SolicitudAduanaService service, DocumentoAdjuntoService adjuntoService) {
-        this.service = service;
+    public SolicitudAduanaController(SolicitudAduanaService solicitudService, DocumentoAdjuntoService adjuntoService) {
+        this.solicitudService = solicitudService;
         this.adjuntoService = adjuntoService;
     }
 
     @PostMapping
     public ResponseEntity<SolicitudViajeMenores> crear(@RequestBody SolicitudViajeMenores solicitud) {
-        return new ResponseEntity<>(service.crearSolicitud(solicitud), HttpStatus.CREATED);
+        return new ResponseEntity<>(solicitudService.crearSolicitud(solicitud), HttpStatus.CREATED);
     }
 
     @GetMapping
     public List<SolicitudViajeMenores> listar() {
-        return service.obtenerTodas();
+        return solicitudService.obtenerTodas();
     }
 
     @PutMapping("/{id}/estado")
@@ -54,13 +49,16 @@ public class SolicitudAduanaController {
             @PathVariable Long id,
             @RequestParam String estado
     ) {
-        return ResponseEntity.ok(service.actualizarEstado(id, estado));
+        return ResponseEntity.ok(solicitudService.actualizarEstado(id, estado));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudViajeMenores> obtenerPorId(@PathVariable Long id) {
-        Optional<SolicitudViajeMenores> s = service.obtenerPorId(id);
-        return s.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+        SolicitudViajeMenores s = solicitudService.obtenerPorId(id);
+        if (s == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(s);
+
     }
 
     @GetMapping("/descargar/{id}")
@@ -142,7 +140,7 @@ public class SolicitudAduanaController {
             solicitud.setMotivo(motivo);
             solicitud.setPaisOrigen(paisOrigen);
 
-            SolicitudViajeMenores guardada = service.crearSolicitud(solicitud);
+            SolicitudViajeMenores guardada = solicitudService.crearSolicitud(solicitud);
 
 
 
