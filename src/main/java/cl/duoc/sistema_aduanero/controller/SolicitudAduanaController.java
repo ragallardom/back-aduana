@@ -1,5 +1,6 @@
 package cl.duoc.sistema_aduanero.controller;
 
+import cl.duoc.sistema_aduanero.dto.SolicitudViajeMenoresRequest;
 import cl.duoc.sistema_aduanero.model.AdjuntoViajeMenores;
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
@@ -28,6 +29,44 @@ public class SolicitudAduanaController {
                                    DocumentoAdjuntoService adjuntoService) {
     this.solicitudService = solicitudService;
     this.adjuntoService = adjuntoService;
+  }
+
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Void> crearSolicitud(
+      @ModelAttribute SolicitudViajeMenoresRequest request) {
+    try {
+      SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
+      solicitud.setEstado(request.getEstado());
+      solicitud.setTipoSolicitudMenor(request.getTipoSolicitudMenor());
+      solicitud.setNombreMenor(request.getNombreMenor());
+      solicitud.setFechaNacimientoMenor(request.getFechaNacimientoMenor());
+      solicitud.setDocumentoMenor(request.getDocumentoMenor());
+      solicitud.setNumeroDocumentoMenor(request.getNumeroDocumentoMenor());
+      solicitud.setNacionalidadMenor(request.getNacionalidadMenor());
+      solicitud.setNombrePadreMadre(request.getNombrePadreMadre());
+      solicitud.setRelacionMenor(request.getRelacionMenor());
+      solicitud.setDocumentoPadre(request.getDocumentoPadre());
+      solicitud.setNumeroDocumentoPadre(request.getNumeroDocumentoPadre());
+      solicitud.setTelefonoPadre(request.getTelefonoPadre());
+      solicitud.setEmailPadre(request.getEmailPadre());
+      solicitud.setFechaViaje(request.getFechaViaje());
+      solicitud.setNumeroTransporte(request.getNumeroTransporte());
+      solicitud.setPaisOrigen(request.getPaisOrigen());
+      solicitud.setPaisDestino(request.getPaisDestino());
+      solicitud.setMotivoViaje(request.getMotivoViaje());
+
+      SolicitudViajeMenores creada = solicitudService.crearSolicitud(solicitud);
+
+      if (request.getArchivos() != null && !request.getArchivos().isEmpty()) {
+        adjuntoService.guardarAdjuntos(
+            creada, request.getTiposDocumento(), request.getArchivos());
+      }
+
+      return ResponseEntity.ok().build();
+
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @GetMapping("/descargar/{id}")
