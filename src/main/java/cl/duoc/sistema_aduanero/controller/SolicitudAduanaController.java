@@ -55,8 +55,13 @@ public class SolicitudAduanaController {
   @PutMapping("/{id}/estado")
   public ResponseEntity<SolicitudViajeMenoresResponse>
   actualizarEstado(@PathVariable Long id, @RequestParam String estado) {
-    SolicitudViajeMenores act = solicitudService.actualizarEstado(id, estado);
-    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(act));
+    Optional<SolicitudViajeMenores> actOpt =
+        solicitudService.actualizarEstado(id, estado);
+    if (actOpt.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(
+        SolicitudViajeMenoresResponse.fromEntity(actOpt.get()));
   }
 
   @GetMapping("/{id}")
