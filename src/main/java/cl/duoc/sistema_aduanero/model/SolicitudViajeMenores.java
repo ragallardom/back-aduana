@@ -1,6 +1,7 @@
 package cl.duoc.sistema_aduanero.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class SolicitudViajeMenores {
   @Column(name = "nombre_menor", nullable = false) private String nombreMenor;
 
   @Column(name = "fecha_nacimiento_menor", nullable = false)
-  private LocalDateTime fechaNacimientoMenor;
+  private LocalDate fechaNacimientoMenor;
 
   @Column(name = "documento_menor", nullable = false)
   private String documentoMenor;
@@ -55,7 +56,7 @@ public class SolicitudViajeMenores {
 
   // Detalles del viaje
   @Column(name = "fecha_viaje", nullable = false)
-  private LocalDateTime fechaViaje;
+  private LocalDate fechaViaje;
 
   @Column(name = "numero_transporte", nullable = false)
   private String numeroTransporte;
@@ -112,11 +113,11 @@ public class SolicitudViajeMenores {
     this.nombreMenor = nombreMenor;
   }
 
-  public LocalDateTime getFechaNacimientoMenor() {
+  public LocalDate getFechaNacimientoMenor() {
     return fechaNacimientoMenor;
   }
 
-  public void setFechaNacimientoMenor(LocalDateTime fechaNacimientoMenor) {
+  public void setFechaNacimientoMenor(LocalDate fechaNacimientoMenor) {
     this.fechaNacimientoMenor = fechaNacimientoMenor;
   }
 
@@ -192,11 +193,11 @@ public class SolicitudViajeMenores {
     this.emailPadre = emailPadre;
   }
 
-  public LocalDateTime getFechaViaje() {
+  public LocalDate getFechaViaje() {
     return fechaViaje;
   }
 
-  public void setFechaViaje(LocalDateTime fechaViaje) {
+  public void setFechaViaje(LocalDate fechaViaje) {
     this.fechaViaje = fechaViaje;
   }
 
