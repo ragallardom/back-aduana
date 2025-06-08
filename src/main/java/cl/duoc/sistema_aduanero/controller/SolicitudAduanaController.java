@@ -36,7 +36,11 @@ public class SolicitudAduanaController {
       @ModelAttribute SolicitudViajeMenoresRequest request) {
     try {
       SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
-      solicitud.setEstado(request.getEstado());
+      String estado = request.getEstado();
+      if (estado == null || estado.trim().isEmpty()) {
+        estado = "PENDIENTE";
+      }
+      solicitud.setEstado(estado);
       solicitud.setTipoSolicitudMenor(request.getTipoSolicitudMenor());
       solicitud.setNombreMenor(request.getNombreMenor());
       solicitud.setFechaNacimientoMenor(request.getFechaNacimientoMenor());
