@@ -124,18 +124,18 @@ public class MainController {
       String boundary = bodyPublisher.getBoundary();
 
       // 4) Crear la petición HTTP POST
-      HttpRequest request =
-          HttpRequest.newBuilder()
-              .uri(URI.create("http://localhost:8080/api/solicitudes/adjuntar"))
-              .header("Content-Type",
-                      "multipart/form-data; boundary=" + boundary)
-              .POST(bodyPublisher)
-              .build();
+        HttpRequest request =
+            HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/api/solicitudes"))
+                .header("Content-Type",
+                        "multipart/form-data; boundary=" + boundary)
+                .POST(bodyPublisher)
+                .build();
 
       // 5) Enviar petición y obtener respuesta
       HttpResponse<String> response =
           httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-      if (response.statusCode() == 201) {
+        if (response.statusCode() == 200) {
         showAlert(Alert.AlertType.INFORMATION,
                   "Solicitud enviada correctamente.");
         limpiarFormulario();
