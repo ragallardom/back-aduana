@@ -11,17 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdjuntoViajeMenores {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
 
-    @Column(name = "nombre_archivo", nullable = false)
-    private String nombreArchivo;
+  @Column(name = "nombre_archivo", nullable = false)
+  private String nombreArchivo;
 
-    @Column(name = "ruta", nullable = false)
-    private String ruta;
+  @Column(name = "ruta", nullable = false) private String ruta;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_solicitud", nullable = false)
-    private SolicitudViajeMenores solicitud;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_solicitud", nullable = false)
+  private SolicitudViajeMenores solicitud;
 }
