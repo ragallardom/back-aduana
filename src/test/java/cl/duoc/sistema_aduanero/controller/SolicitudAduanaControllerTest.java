@@ -78,4 +78,46 @@ class SolicitudAduanaControllerTest {
     verify(solicitudService).crearSolicitud(captor.capture());
     assertEquals("PENDIENTE", captor.getValue().getEstado());
   }
+
+  @Test
+  void entradaFijaDestinoChile() throws Exception {
+    SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
+    solicitud.setId(5L);
+
+    Mockito
+        .when(solicitudService.crearSolicitud(any(SolicitudViajeMenores.class)))
+        .thenReturn(solicitud);
+
+    mockMvc
+        .perform(multipart("/api/solicitudes")
+                     .param("tipoSolicitudMenor", "Entrada")
+                     .param("paisDestino", "Peru"))
+        .andExpect(status().isOk());
+
+    ArgumentCaptor<SolicitudViajeMenores> captor =
+        ArgumentCaptor.forClass(SolicitudViajeMenores.class);
+    verify(solicitudService).crearSolicitud(captor.capture());
+    assertEquals("Chile", captor.getValue().getPaisDestino());
+  }
+
+  @Test
+  void salidaFijaOrigenChile() throws Exception {
+    SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
+    solicitud.setId(6L);
+
+    Mockito
+        .when(solicitudService.crearSolicitud(any(SolicitudViajeMenores.class)))
+        .thenReturn(solicitud);
+
+    mockMvc
+        .perform(multipart("/api/solicitudes")
+                     .param("tipoSolicitudMenor", "Salida")
+                     .param("paisOrigen", "Argentina"))
+        .andExpect(status().isOk());
+
+    ArgumentCaptor<SolicitudViajeMenores> captor =
+        ArgumentCaptor.forClass(SolicitudViajeMenores.class);
+    verify(solicitudService).crearSolicitud(captor.capture());
+    assertEquals("Chile", captor.getValue().getPaisOrigen());
+  }
 }

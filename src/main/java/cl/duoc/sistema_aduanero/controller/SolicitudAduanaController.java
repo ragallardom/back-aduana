@@ -55,8 +55,19 @@ public class SolicitudAduanaController {
       solicitud.setEmailPadre(request.getEmailPadre());
       solicitud.setFechaViaje(request.getFechaViaje());
       solicitud.setNumeroTransporte(request.getNumeroTransporte());
-      solicitud.setPaisOrigen(request.getPaisOrigen());
-      solicitud.setPaisDestino(request.getPaisDestino());
+
+      String tipo = request.getTipoSolicitudMenor();
+      if ("Entrada".equalsIgnoreCase(tipo)) {
+        solicitud.setPaisOrigen(request.getPaisOrigen());
+        solicitud.setPaisDestino("Chile");
+      } else if ("Salida".equalsIgnoreCase(tipo)) {
+        solicitud.setPaisOrigen("Chile");
+        solicitud.setPaisDestino(request.getPaisDestino());
+      } else {
+        solicitud.setPaisOrigen(request.getPaisOrigen());
+        solicitud.setPaisDestino(request.getPaisDestino());
+      }
+
       solicitud.setMotivoViaje(request.getMotivoViaje());
 
       SolicitudViajeMenores creada = solicitudService.crearSolicitud(solicitud);
