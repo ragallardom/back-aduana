@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/solicitudes")
@@ -33,7 +35,9 @@ public class SolicitudAduanaController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Void> crearSolicitud(
-      @ModelAttribute SolicitudViajeMenoresRequest request) {
+      @ModelAttribute SolicitudViajeMenoresRequest request,
+      @RequestPart(value = "archivos", required = false) List<MultipartFile> archivos,
+      @RequestParam(value = "tiposDocumento", required = false) List<String> tiposDoc) {
     try {
       SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
       String estado = request.getEstado();
@@ -72,9 +76,13 @@ public class SolicitudAduanaController {
 
       SolicitudViajeMenores creada = solicitudService.crearSolicitud(solicitud);
 
-      if (request.getArchivos() != null && !request.getArchivos().isEmpty()) {
-        adjuntoService.guardarAdjuntos(
-            creada, request.getTiposDocumento(), request.getArchivos());
+      List<MultipartFile> archivosRecibidos =
+          (archivos != null) ? archivos : request.getArchivos();
+      List<String> tiposRecibidos =
+          (tiposDoc != null) ? tiposDoc : request.getTiposDocumento();
+
+      if (archivosRecibidos != null && !archivosRecibidos.isEmpty()) {
+        adjuntoService.guardarAdjuntos(creada, tiposRecibidos, archivosRecibidos);
       }
 
       return ResponseEntity.ok().build();
