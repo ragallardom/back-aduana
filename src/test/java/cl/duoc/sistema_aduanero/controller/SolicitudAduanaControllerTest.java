@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import cl.duoc.sistema_aduanero.dto.SolicitudViajeMenoresRequest;
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
 import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
@@ -38,10 +39,12 @@ class SolicitudAduanaControllerTest {
         .when(solicitudService.crearSolicitud(any(SolicitudViajeMenores.class)))
         .thenReturn(solicitud);
 
+    SolicitudViajeMenoresRequest req = new SolicitudViajeMenoresRequest();
+
     mockMvc
         .perform(post("/api/solicitudes")
                      .contentType(MediaType.APPLICATION_JSON)
-                     .content(objectMapper.writeValueAsString(solicitud)))
+                     .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(1L));
   }

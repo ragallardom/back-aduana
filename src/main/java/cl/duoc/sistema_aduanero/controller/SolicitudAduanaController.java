@@ -1,5 +1,8 @@
 package cl.duoc.sistema_aduanero.controller;
 
+import cl.duoc.sistema_aduanero.dto.SolicitudViajeMenoresRequest;
+import cl.duoc.sistema_aduanero.dto.SolicitudViajeMenoresResponse;
+import cl.duoc.sistema_aduanero.dto.AdjuntoViajeMenoresResponse;
 import cl.duoc.sistema_aduanero.model.AdjuntoViajeMenores;
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
@@ -34,31 +37,37 @@ public class SolicitudAduanaController {
   }
 
   @PostMapping
-  public ResponseEntity<SolicitudViajeMenores>
-  crear(@RequestBody SolicitudViajeMenores solicitud) {
-    return new ResponseEntity<>(solicitudService.crearSolicitud(solicitud),
-                                HttpStatus.CREATED);
+  public ResponseEntity<SolicitudViajeMenoresResponse>
+  crear(@RequestBody SolicitudViajeMenoresRequest solicitud) {
+    SolicitudViajeMenores entidad = solicitud.toEntity();
+    SolicitudViajeMenores guardada = solicitudService.crearSolicitud(entidad);
+    return new ResponseEntity<>(
+        SolicitudViajeMenoresResponse.fromEntity(guardada), HttpStatus.CREATED);
   }
 
   @GetMapping
-  public List<SolicitudViajeMenores> listar() {
-    return solicitudService.obtenerTodas();
+  public List<SolicitudViajeMenoresResponse> listar() {
+    return solicitudService.obtenerTodas().stream()
+        .map(SolicitudViajeMenoresResponse::fromEntity)
+        .toList();
   }
 
   @PutMapping("/{id}/estado")
-  public ResponseEntity<SolicitudViajeMenores>
+  public ResponseEntity<SolicitudViajeMenoresResponse>
   actualizarEstado(@PathVariable Long id, @RequestParam String estado) {
-    return ResponseEntity.ok(solicitudService.actualizarEstado(id, estado));
+    SolicitudViajeMenores act = solicitudService.actualizarEstado(id, estado);
+    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(act));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<SolicitudViajeMenores>
+  public ResponseEntity<SolicitudViajeMenoresResponse>
   obtenerPorId(@PathVariable Long id) {
 
     Optional<SolicitudViajeMenores> s = solicitudService.obtenerPorId(id);
-    if (s == null)
+    if (s.isEmpty()) {
       return ResponseEntity.notFound().build();
-    return ResponseEntity.ok(s.get());
+    }
+    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(s.get()));
   }
 
   @GetMapping("/descargar/{id}")
@@ -126,7 +135,7 @@ public class SolicitudAduanaController {
   }
 
   @PostMapping("/adjuntar")
-  public ResponseEntity<SolicitudViajeMenores>
+  public ResponseEntity<SolicitudViajeMenoresResponse>
   crearConAdjunto(@RequestParam String nombreSolicitante,
                   @RequestParam String tipoDocumento,
                   @RequestParam String numeroDocumento,
@@ -141,7 +150,8 @@ public class SolicitudAduanaController {
 
       adjuntoService.guardarArchivo(guardada, tipoAdjunto, archivo);
 
-      return new ResponseEntity<>(guardada, HttpStatus.CREATED);
+      return new ResponseEntity<>(
+          SolicitudViajeMenoresResponse.fromEntity(guardada), HttpStatus.CREATED);
 
     } catch (IOException e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
