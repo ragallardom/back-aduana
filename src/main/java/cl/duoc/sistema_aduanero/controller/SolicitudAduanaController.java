@@ -1,15 +1,19 @@
 package cl.duoc.sistema_aduanero.controller;
 
-import cl.duoc.sistema_aduanero.dto.AdjuntoViajeMenoresRequest;
-import cl.duoc.sistema_aduanero.dto.SolicitudViajeMenoresResponse;
+import cl.duoc.sistema_aduanero.model.AdjuntoViajeMenores;
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
 import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
-import org.springframework.http.HttpStatus;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,63 +30,64 @@ public class SolicitudAduanaController {
     this.adjuntoService = adjuntoService;
   }
 
-  /**
-   * Lista todas las solicitudes disponibles.
-   *
-   * @return lista de solicitudes en formato de respuesta
-   */
-  @GetMapping
-  public List<SolicitudViajeMenoresResponse> listar() {
-    return solicitudService.obtenerTodas().stream()
-        .map(SolicitudViajeMenoresResponse::fromEntity)
-        .toList();
-  }
-
-  /**
-   * Obtiene una solicitud por id.
-   *
-   * @param id identificador de la solicitud
-   * @return entidad envuelta en {@link ResponseEntity}
-   */
-  @GetMapping("/{id}")
-  public ResponseEntity<SolicitudViajeMenoresResponse> obtenerPorId(
-      @PathVariable Long id) {
-    Optional<SolicitudViajeMenores> s = solicitudService.obtenerPorId(id);
-    if (s.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(s.get()));
-  }
-
-  @PostMapping(consumes = "multipart/form-data")
-  public ResponseEntity<?> crear(@ModelAttribute AdjuntoViajeMenoresRequest request) {
-    if (request.getArchivos() == null || request.getArchivos().size() < 3) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(Map.of("message", "Se requieren al menos 3 archivos adjuntos"));
-    }
+  @GetMapping("/descargar/{id}")
+  public ResponseEntity<InputStreamResource>
+  descargarTodosLosDocumentos(@PathVariable Long id) {
     try {
-      SolicitudViajeMenores entidad = request.toSolicitudEntity();
-      SolicitudViajeMenores guardada = solicitudService.crearSolicitud(entidad);
+      Optional<SolicitudViajeMenores> solicitudOpt =
+          solicitudService.obtenerPorId(id);
+      if (solicitudOpt.isEmpty()) {
+        return ResponseEntity.notFound().build();
+      }
+      SolicitudViajeMenores solicitud = solicitudOpt.get();
 
-      List<?> docs =
-          adjuntoService.guardarAdjuntos(guardada, request.getTiposDocumento(), request.getArchivos());
-      guardada.setDocumentos((List) docs);
+      String nombreZip = "solicitud_" + id + "_documentos.zip";
 
-      return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(guardada));
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ZipOutputStream zos = new ZipOutputStream(baos);
+
+      for (AdjuntoViajeMenores doc : solicitud.getDocumentos()) {
+        String rutaArchivo = doc.getRuta();
+        Path pathDoc = Paths.get(rutaArchivo);
+
+        if (!Files.exists(pathDoc) || Files.isDirectory(pathDoc)) {
+          continue;
+        }
+
+        String nombreDentroZip = doc.getNombreArchivo();
+
+        zos.putNextEntry(new ZipEntry(nombreDentroZip));
+
+        try (InputStream is = Files.newInputStream(pathDoc)) {
+          byte[] buffer = new byte[4096];
+          int len;
+          while ((len = is.read(buffer)) > 0) {
+            zos.write(buffer, 0, len);
+          }
+        }
+
+        zos.closeEntry();
+      }
+
+      zos.finish();
+      zos.close();
+
+      byte[] zipBytes = baos.toByteArray();
+      ByteArrayInputStream bis = new ByteArrayInputStream(zipBytes);
+      InputStreamResource resource = new InputStreamResource(bis);
+
+      return ResponseEntity.ok()
+          .header(HttpHeaders.CONTENT_DISPOSITION,
+                  "attachment; filename=\"" + nombreZip + "\"")
+          .contentLength(zipBytes.length)
+          .contentType(MediaType.APPLICATION_OCTET_STREAM)
+          .body(resource);
+
     } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(Map.of("message", "Error procesando archivos"));
+      e.printStackTrace();
+      return ResponseEntity.internalServerError().build();
     }
   }
 
-  @PutMapping("/{id}/estado")
-  public ResponseEntity<SolicitudViajeMenoresResponse> actualizarEstado(
-      @PathVariable Long id, @RequestParam String estado) {
-    Optional<SolicitudViajeMenores> actOpt = solicitudService.actualizarEstado(id, estado);
-    if (actOpt.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(actOpt.get()));
-  }
 }
 

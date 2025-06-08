@@ -23,15 +23,11 @@ public class SolicitudAduanaService {
     return repository.findAll();
   }
 
-  public Optional<SolicitudViajeMenores> actualizarEstado(Long id,
-                                                          String nuevoEstado) {
-    Optional<SolicitudViajeMenores> opt = repository.findById(id);
-    if (opt.isEmpty()) {
-      return Optional.empty();
-    }
-    SolicitudViajeMenores solicitud = opt.get();
+  public SolicitudViajeMenores actualizarEstado(Long id, String nuevoEstado) {
+    SolicitudViajeMenores solicitud = repository.findById(id).orElseThrow(
+        () -> new RuntimeException("Solicitud no encontrada"));
     solicitud.setEstado(nuevoEstado);
-    return Optional.of(repository.save(solicitud));
+    return repository.save(solicitud);
   }
 
   public Optional<SolicitudViajeMenores> obtenerPorId(Long id) {
