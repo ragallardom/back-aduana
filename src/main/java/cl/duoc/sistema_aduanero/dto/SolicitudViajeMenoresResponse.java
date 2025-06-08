@@ -1,5 +1,6 @@
 package cl.duoc.sistema_aduanero.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class SolicitudViajeMenoresResponse {
     private LocalDateTime fechaCreacion;
     private String tipoSolicitudMenor;
     private String nombreMenor;
-    private LocalDateTime fechaNacimientoMenor;
+    private LocalDate fechaNacimientoMenor;
     private String documentoMenor;
     private String numeroDocumentoMenor;
     private String nacionalidadMenor;
@@ -24,7 +25,7 @@ public class SolicitudViajeMenoresResponse {
     private String numeroDocumentoPadre;
     private String telefonoPadre;
     private String emailPadre;
-    private LocalDateTime fechaViaje;
+    private LocalDate fechaViaje;
     private String numeroTransporte;
     private String paisOrigen;
     private String paisDestino;
@@ -74,11 +75,11 @@ public class SolicitudViajeMenoresResponse {
         this.nombreMenor = nombreMenor;
     }
 
-    public LocalDateTime getFechaNacimientoMenor() {
+    public LocalDate getFechaNacimientoMenor() {
         return fechaNacimientoMenor;
     }
 
-    public void setFechaNacimientoMenor(LocalDateTime fechaNacimientoMenor) {
+    public void setFechaNacimientoMenor(LocalDate fechaNacimientoMenor) {
         this.fechaNacimientoMenor = fechaNacimientoMenor;
     }
 
@@ -154,11 +155,11 @@ public class SolicitudViajeMenoresResponse {
         this.emailPadre = emailPadre;
     }
 
-    public LocalDateTime getFechaViaje() {
+    public LocalDate getFechaViaje() {
         return fechaViaje;
     }
 
-    public void setFechaViaje(LocalDateTime fechaViaje) {
+    public void setFechaViaje(LocalDate fechaViaje) {
         this.fechaViaje = fechaViaje;
     }
 
