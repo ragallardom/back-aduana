@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 public class AdjuntoViajeMenores {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
 
+  @Column(name = "nombre_original", nullable = false)
+  private String nombreOriginal;
+
   @Column(name = "nombre_archivo", nullable = false)
   private String nombreArchivo;
 

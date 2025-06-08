@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AdjuntoViajeMenoresResponse {
     private Long id;
+    private String nombreOriginal;
     private String nombreArchivo;
     private String ruta;
 
     public static AdjuntoViajeMenoresResponse fromEntity(AdjuntoViajeMenores adj) {
         if (adj == null) return null;
-        return new AdjuntoViajeMenoresResponse(adj.getId(), adj.getNombreArchivo(), adj.getRuta());
+        return new AdjuntoViajeMenoresResponse(adj.getId(), adj.getNombreOriginal(), adj.getNombreArchivo(), adj.getRuta());
     }
 }
