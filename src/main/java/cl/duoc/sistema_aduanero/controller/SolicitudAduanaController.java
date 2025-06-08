@@ -26,6 +26,34 @@ public class SolicitudAduanaController {
     this.adjuntoService = adjuntoService;
   }
 
+  /**
+   * Lista todas las solicitudes disponibles.
+   *
+   * @return lista de solicitudes en formato de respuesta
+   */
+  @GetMapping
+  public List<SolicitudViajeMenoresResponse> listar() {
+    return solicitudService.obtenerTodas().stream()
+        .map(SolicitudViajeMenoresResponse::fromEntity)
+        .toList();
+  }
+
+  /**
+   * Obtiene una solicitud por id.
+   *
+   * @param id identificador de la solicitud
+   * @return entidad envuelta en {@link ResponseEntity}
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<SolicitudViajeMenoresResponse> obtenerPorId(
+      @PathVariable Long id) {
+    Optional<SolicitudViajeMenores> s = solicitudService.obtenerPorId(id);
+    if (s.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(s.get()));
+  }
+
   @PostMapping(consumes = "multipart/form-data")
   public ResponseEntity<?> crear(@ModelAttribute AdjuntoViajeMenoresRequest request) {
     if (request.getArchivos() == null || request.getArchivos().size() < 3) {
