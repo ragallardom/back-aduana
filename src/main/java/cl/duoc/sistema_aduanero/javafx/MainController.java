@@ -111,13 +111,14 @@ public class MainController {
       // 2) Construir el body multipart/form-data usando MultipartBodyPublisher
       MultipartBodyPublisher bodyPublisher =
           MultipartBodyPublisher.builder()
-              .addPart("nombreSolicitante", nombre)
-              .addPart("numeroDocumento", numero)
-              .addPart("tipoDocumento", tipoDocumentoEnt)
+              // Nombres de los campos compatibles con la API REST
+              .addPart("nombrePadreMadre", nombre)
+              .addPart("numeroDocumentoPadre", numero)
+              .addPart("documentoPadre", tipoDocumentoEnt)
               .addPart("paisOrigen", pais)
-              .addPart("motivo", motivo)
-              .addPart("tipoAdjunto", tipoAdj)
-              .addFilePart("archivo", archivoSeleccionado.toPath())
+              .addPart("motivoViaje", motivo)
+              .addPart("tiposDocumento", tipoAdj)
+              .addFilePart("archivos", archivoSeleccionado.toPath())
               .build();
 
       // 3) Obtener el boundary generado por el builder
