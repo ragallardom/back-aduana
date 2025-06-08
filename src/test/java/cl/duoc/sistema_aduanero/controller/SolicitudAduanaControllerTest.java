@@ -1,10 +1,12 @@
 package cl.duoc.sistema_aduanero.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import cl.duoc.sistema_aduanero.dto.AdjuntoViajeMenoresRequest;
 import cl.duoc.sistema_aduanero.model.SolicitudViajeMenores;
 import cl.duoc.sistema_aduanero.service.DocumentoAdjuntoService;
 import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
@@ -51,7 +53,29 @@ class SolicitudAduanaControllerTest {
                      .file(file1)
                      .file(file2)
                      .file(file3)
-                     .param("estado", "NUEVA"))
+        .param("estado", "NUEVA"))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void crearSinEstadoUsaPendiente() throws Exception {
+    SolicitudViajeMenores solicitud = new SolicitudViajeMenores();
+    solicitud.setId(4L);
+
+    Mockito
+        .when(solicitudService.crearSolicitud(any(SolicitudViajeMenores.class)))
+        .thenReturn(solicitud);
+    Mockito
+        .when(adjuntoService.guardarAdjuntos(any(), any(), any()))
+        .thenReturn(Collections.emptyList());
+
+    mockMvc
+        .perform(multipart("/api/solicitudes"))
+        .andExpect(status().isOk());
+
+    ArgumentCaptor<SolicitudViajeMenores> captor =
+        ArgumentCaptor.forClass(SolicitudViajeMenores.class);
+    verify(solicitudService).crearSolicitud(captor.capture());
+    assertEquals("PENDIENTE", captor.getValue().getEstado());
   }
 }
