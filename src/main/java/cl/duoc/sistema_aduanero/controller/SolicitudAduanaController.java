@@ -8,6 +8,7 @@ import cl.duoc.sistema_aduanero.service.SolicitudAduanaService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,4 +46,15 @@ public class SolicitudAduanaController {
           .body(Map.of("message", "Error procesando archivos"));
     }
   }
+
+  @PutMapping("/{id}/estado")
+  public ResponseEntity<SolicitudViajeMenoresResponse> actualizarEstado(
+      @PathVariable Long id, @RequestParam String estado) {
+    Optional<SolicitudViajeMenores> actOpt = solicitudService.actualizarEstado(id, estado);
+    if (actOpt.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(SolicitudViajeMenoresResponse.fromEntity(actOpt.get()));
+  }
 }
+
